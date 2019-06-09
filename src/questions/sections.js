@@ -10,12 +10,7 @@ export const SECTIONS: Array<Section> = [
   },
   {
     name: 'Your landlord',
-    forms: [
-      Forms.LANDLORD_COMMS_CHECK,
-      Forms.LANDLORD_COMMS_DETAILS,
-      Forms.LANDLORD_DETAILS,
-      Forms.VCAT_AVOID_REASON,
-    ],
+    forms: [Forms.LANDLORD_COMMS_CHECK, Forms.LANDLORD_COMMS_DETAILS],
   },
   {
     name: 'Your details',

@@ -12,31 +12,25 @@ export const HomeView = () => (
       <Page>
         <Message>
           <h1>Welcome to Anika</h1>
-
           <p>
-            We are a free legal service operated by university students and
-            lawyers who wish to make justice accessible for everyone. You won’t
-            need to pay a cent for our services.
+            Anika is a registered charity that provides legal advice to members
+            of the public. Our legal advice helpful for two key reasons:
           </p>
+          <ul>
+            <li>
+              It's all online, so you don’t need to leave the comfort of your
+              home.
+            </li>
+            <li>It's 100% free: you don’t need to pay us anything.</li>
+          </ul>
+          <h2>Here's how it works</h2>
           <p>
-            We are sorry to hear that you have had difficulty getting your
-            landlord to repair a defect at your rental property. We will do our
-            best to help you get this resolved as soon as possible.
-          </p>
-          <p>
-            So that we can provide you with the most appropriate assistance, we
-            will ask you a few questions about the nature of the defect at your
-            rental property and the communications between you and your landlord
-            (or your landlord’s agent). Don’t worry if you answer “no” to
-            anything as there are no wrong answers.
-          </p>
-          <p>
-            Once you have completed the questionnaire, one of our friendly Anika
-            team members will contact you to introduce themselves and to collect
-            any further information that we need to assist you.
+            So you need something in your rental property to be fixed? In order
+            for us to help you get it fixed, we need you to first complete our
+            questionnaire.
           </p>
           <NamedLink to={VIEWS.FormView} params={{ formId: '0' }}>
-            <Button type="primary">Start</Button>
+            <Button type="primary">Get started</Button>
           </NamedLink>
         </Message>
       </Page>

@@ -6,8 +6,9 @@ import type { Field, Form } from 'types'
 export const HAS_QUOTE: Field = {
   name: 'HAS_QUOTE',
   prompt:
-    'Have you obtained  a quote (i.e. an estimate) for the cost of the repairs to fix the defect?',
-  help: 'It doesn’t matter if you haven’t obtained a quote yet.',
+    'Have you obtained  a quote (i.e. an estimate) for the cost of the repairs to fix the problem?',
+  help:
+    'You can get a quote by contacting a tradesperson, getting them to inspect the problem and asking how much it would cost to fix it.',
   type: FIELD_TYPES.RADIO,
   rules: [rules.isTruthy],
   options: [
@@ -24,7 +25,7 @@ export const HAS_QUOTE: Field = {
 
 export const QUOTE_COST: Field = {
   name: 'QUOTE_COST',
-  prompt: 'What was the quote for the cost of the repairs to fix the defect?',
+  prompt: 'What was the quote for the cost of the repairs to fix the problem?',
   type: FIELD_TYPES.DOLLAR,
   rules: [rules.isTruthy],
 }

@@ -7,19 +7,19 @@ export const LETTER_PERMISSION: Field = {
   rules: [rules.isTruthy],
   name: 'LETTER_PERMISSION',
   prompt:
-    'If any letters or notices need to be sent to your landlord, would you prefer Anika to send those letters or notices to you landlord or would you prefer Anika to prepare the letters or notices for you to send to landlord?',
+    'If a letter needs to be sent to your landlord, would you prefer Anika to sign and send that letter to you landlord or would you prefer Anika to prepare the letter for you to personally sign and send to landlord?',
   help:
     'Letters sent from Anika will place more pressure on the landlord because they will notify the landlord that you have engaged legal advisors to act for you. Letters that are sent personally by you to the landlord will be more "gentle" because legal advisors are not involved.',
   type: FIELD_TYPES.RADIO,
   options: [
     {
       label:
-        'I would prefer Anika to send any letters or notices to my landlord.',
+        'I would prefer Anika to sign and send any letters to my landlord.',
       value: 'anika',
     },
     {
       label:
-        'I would prefer Anika to prepare the letters or notices so that I can personally send them to my landlord',
+        'I would prefer Anika to prepare the letters, but I wanto to personally sign and send them to my landlord',
       value: 'personal',
     },
   ],
@@ -33,20 +33,12 @@ export const CLIENT_NAME: Field = {
   placeholder: 'Full name',
 }
 
-export const CLIENT_RENTAL_ADDRESS: Field = {
+export const CLIENT_ADDRESS: Field = {
   rules: [rules.isTruthy],
   name: 'CLIENT_RENTAL_ADDRESS',
-  label: 'Rental Addr',
+  label: 'Address',
   type: FIELD_TYPES.TEXT,
-  placeholder: 'Address of rental property in issue',
-}
-
-export const CLIENT_PERSONAL_ADDRESS: Field = {
-  rules: [rules.isTruthy],
-  name: 'CLIENT_PERSONAL_ADDRESS',
-  label: 'Personal Addr',
-  type: FIELD_TYPES.TEXT,
-  placeholder: 'Personal address',
+  placeholder: 'Your rental address',
 }
 
 export const CLIENT_EMAIL: Field = {
@@ -80,8 +72,7 @@ export const CLIENT_CONTACT_DETAILS: Field = {
   type: FIELD_TYPES.FIELD_GROUP,
   fields: [
     CLIENT_NAME,
-    CLIENT_RENTAL_ADDRESS,
-    CLIENT_PERSONAL_ADDRESS,
+    CLIENT_ADDRESS,
     CLIENT_EMAIL,
     CLIENT_BUSINESS_PHONE,
     CLIENT_EVENING_PHONE,
@@ -94,8 +85,8 @@ export const CLIENT_CONTACT_METHOD: Field = {
   prompt: 'How would you like to be contacted?',
   type: FIELD_TYPES.RADIO,
   options: [
-    { label: 'Phone and email (we prefer this)', value: 'phone and email' },
-    { label: 'Email only', value: 'email' },
+    { label: 'Phone', value: 'phone' },
+    { label: 'Email', value: 'email' },
   ],
 }
 
