@@ -4,6 +4,7 @@ import { Button, Form as AntForm } from 'antd'
 import styled from 'styled-components'
 
 import { Field, FieldGroup } from 'components'
+import { VerticalAppear } from './animations'
 import { FIELD_TYPES } from 'consts'
 import { NamedLink, VIEWS } from 'routes'
 import type { Form as FormType, View, Data, Validations } from 'types'
@@ -38,41 +39,50 @@ export const Form = ({
         {form.fields.map(f => {
           if (f.type === FIELD_TYPES.FIELD_GROUP) {
             return (
-              <FieldGroup key={f.name} field={f}>
-                <div>
-                  {f.fields &&
-                    f.fields.map(field => (
-                      <Field
-                        key={field.name}
-                        field={field}
-                        valid={
-                          isSubmitted
-                            ? validation.fields[field.name].valid
-                            : true
-                        }
-                        errors={
-                          isSubmitted
-                            ? validation.fields[field.name].errors
-                            : []
-                        }
-                        value={data[field.name] || ''}
-                        onChange={onChange(field.name)}
-                        isCompact
-                      />
-                    ))}
-                </div>
-              </FieldGroup>
+              <VerticalAppear
+                key={f.name}
+                visible={f.when ? f.when(data) : true}
+              >
+                <FieldGroup field={f}>
+                  <div>
+                    {f.fields &&
+                      f.fields.map(field => (
+                        <Field
+                          key={field.name}
+                          field={field}
+                          valid={
+                            isSubmitted
+                              ? validation.fields[field.name].valid
+                              : true
+                          }
+                          errors={
+                            isSubmitted
+                              ? validation.fields[field.name].errors
+                              : []
+                          }
+                          value={data[field.name] || ''}
+                          onChange={onChange(field.name)}
+                          isCompact
+                        />
+                      ))}
+                  </div>
+                </FieldGroup>
+              </VerticalAppear>
             )
           } else {
             return (
-              <Field
+              <VerticalAppear
                 key={f.name}
-                field={f}
-                valid={isSubmitted ? validation.fields[f.name].valid : true}
-                errors={isSubmitted ? validation.fields[f.name].errors : []}
-                value={data[f.name] || ''}
-                onChange={onChange(f.name)}
-              />
+                visible={f.when ? f.when(data) : true}
+              >
+                <Field
+                  field={f}
+                  valid={isSubmitted ? validation.fields[f.name].valid : true}
+                  errors={isSubmitted ? validation.fields[f.name].errors : []}
+                  value={data[f.name] || ''}
+                  onChange={onChange(f.name)}
+                />
+              </VerticalAppear>
             )
           }
         })}

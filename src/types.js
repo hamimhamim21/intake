@@ -69,6 +69,8 @@ export type FieldOption = {
   value: string,
 }
 
+export type Condition = Data => boolean
+
 export type Field = {
   name: string,
   type: FieldType,
@@ -76,6 +78,7 @@ export type Field = {
   help?: string,
   placeholder?: string,
   label?: string,
+  when?: Condition,
   options?: Array<FieldOption>,
   fields?: Array<Field>,
   rules: Array<Rule>,
@@ -87,7 +90,7 @@ export type Form = {
   prompt: string,
   rules: { [string]: Array<Rule> },
   help?: string,
-  when?: Data => boolean,
+  when?: Condition,
   getRedirect?: Data => View | null,
 }
 

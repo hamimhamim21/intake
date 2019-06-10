@@ -90,26 +90,42 @@ export const FormContainer = connect(
 
 const getValidation = (form: FormType, answers: Data): Validations => {
   const fieldRules = {}
+  // Get field specific rules for each field in the form.
   for (let field of form.fields) {
-    if (field.fields) {
-      for (let subfield of field.fields) {
-        fieldRules[subfield.name] = [
-          ...(form.rules[subfield.name] || []),
-          ...subfield.rules,
-        ]
-      }
+    // If the field is hidden, ignore its rules, just use the form rules
+    const isFieldHidden = field.when && !field.when(answers)
+    if (isFieldHidden) {
+      fieldRules[field.name] = form.rules[field.name] || []
     } else {
+      // If the field is not hidden, merge its rules with the form rules
       fieldRules[field.name] = [
         ...(form.rules[field.name] || []),
         ...field.rules,
       ]
+    }
+    if (field.fields) {
+      // If the field is a FieldGroup, check its subfields
+      for (let subfield of field.fields) {
+        const isSubFieldHidden = subfield.when && !subfield.when(answers)
+        // If the subfield is hiddent, ignore its rules, just use form rules
+        if (isSubFieldHidden || isFieldHidden) {
+          fieldRules[subfield.name] = form.rules[subfield.name] || []
+        } else {
+          // Merge form rules and field rules for the subfield
+          fieldRules[subfield.name] = [
+            ...(form.rules[subfield.name] || []),
+            ...subfield.rules,
+          ]
+        }
+      }
     }
   }
   const rules = {
     ...form.rules,
     ...fieldRules,
   }
-  return validate(rules)(answers)
+  const validation = validate(rules)(answers)
+  return validation
 }
 
 const getNextPage = (

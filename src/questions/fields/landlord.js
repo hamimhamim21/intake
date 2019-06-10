@@ -1,6 +1,7 @@
 // @flow
 import { FIELD_TYPES } from 'consts'
 import { rules } from 'utils'
+import * as Conditions from '../conditions'
 import type { Field, Form } from 'types'
 
 export const HAS_CONTACTED_LANDLORD: Field = {
@@ -112,7 +113,7 @@ export const LANDLORD_CONTACT_DETAILS: Field = {
   name: 'LANDLORD_CONTACT_DETAILS',
   prompt: 'Please provide the contact details of your landlord.',
   type: FIELD_TYPES.FIELD_GROUP,
-  rules: [rules.isTruthy],
+  rules: [],
   fields: [LANDLORD_NAME, LANDLORD_ADDRESS, LANDLORD_EMAIL, LANDLORD_PHONE],
 }
 
@@ -126,21 +127,43 @@ export const LANDLORD_HAS_AGENT: Field = {
   options: [{ label: 'Yes', value: 'yes' }, { label: 'No', value: 'no' }],
 }
 
-export const IS_VCAT_OK: Field = {
-  name: 'IS_VCAT_OK',
+export const AGENT_NAME = {
+  name: 'AGENT_NAME',
+  label: 'Full name',
   rules: [rules.isTruthy],
-  prompt:
-    'Sometimes the only way to force a landlord to fix defects is to commence VCAT proceedings against the landlord. Would you be comfortable bringing VCAT proceedings against your landlord?',
-  help:
-    'VCAT is a tribunal that hears and decides disputes between tenants and landlord. VCAT performs similar functions to a court, but is cheaper, faster and more informal than a court. A common reason why a tenant may not want to commence VCAT proceedings is they do not want to aggravate their relationship with their landlord because they are trying to secure an upcoming lease renewal.',
-  type: FIELD_TYPES.RADIO_BTN,
-  options: [{ label: 'Yes', value: 'yes' }, { label: 'No', value: 'no' }],
+  type: FIELD_TYPES.TEXT,
+  placeholder: 'Enter their full name',
 }
 
-export const VCAT_AVOID_REASON: Field = {
-  name: 'VCAT_AVOID_REASON',
+export const AGENT_ADDRESS = {
+  name: 'AGENT_ADDRESS',
+  label: 'Address',
   rules: [rules.isTruthy],
-  prompt:
-    'Can you please explain why you wouldn’t be comfortable bringing VCAT proceedings against your landlord?',
-  type: FIELD_TYPES.TEXTAREA,
+  type: FIELD_TYPES.TEXT,
+  placeholder: 'Enter their address',
+}
+
+export const AGENT_EMAIL: Field = {
+  name: 'AGENT_EMAIL',
+  type: FIELD_TYPES.TEXT,
+  rules: [rules.isTruthy],
+  label: 'Email',
+  placeholder: 'Enter their email address',
+}
+
+export const AGENT_PHONE: Field = {
+  name: 'AGENT_PHONE',
+  type: FIELD_TYPES.TEXT,
+  label: 'Phone',
+  rules: [rules.isTruthy],
+  placeholder: 'Enter their phone number',
+}
+
+export const AGENT_CONTACT_DETAILS: Field = {
+  name: 'AGENT_CONTACT_DETAILS',
+  prompt: "Please provide the contact details of your landlord's agent.",
+  type: FIELD_TYPES.FIELD_GROUP,
+  when: Conditions.HAS_AGENT,
+  rules: [],
+  fields: [AGENT_NAME, AGENT_ADDRESS, AGENT_EMAIL, AGENT_PHONE],
 }

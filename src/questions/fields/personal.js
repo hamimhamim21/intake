@@ -1,6 +1,7 @@
 // @flow
 import { FIELD_TYPES } from 'consts'
 import { rules } from 'utils'
+import * as Conditions from '../conditions'
 import type { Field, Form } from 'types'
 
 export const LETTER_PERMISSION: Field = {
@@ -66,7 +67,7 @@ export const CLIENT_EVENING_PHONE: Field = {
 }
 
 export const CLIENT_CONTACT_DETAILS: Field = {
-  rules: [rules.isTruthy],
+  rules: [],
   name: 'CLIENT_CONTACT_DETAILS',
   prompt: 'Please provide your contact details.',
   type: FIELD_TYPES.FIELD_GROUP,
@@ -95,4 +96,24 @@ export const CLIENT_REFERRAL: Field = {
   name: 'CLIENT_REFERRAL',
   type: FIELD_TYPES.TEXTAREA,
   prompt: 'How did you hear about Anika?',
+}
+
+export const IS_VCAT_OK: Field = {
+  name: 'IS_VCAT_OK',
+  rules: [rules.isTruthy],
+  prompt:
+    'Would you be willing to bring a case against your landlord at VCAT in order to get your landlord to fix the defect?',
+  help:
+    'VCAT is the tribunal that hears and decides disputes between tenants and landlords. VCAT is similar to a court, but it is much cheaper, faster, less formal and you don’t need a lawyer to speak for you. Sometimes the only way to force a landlord to perform repairs is to bring a case against them at VCAT. A common reason why tenants would not want to bring a case against their landlord at VCAT is because they are scared their landlord will become angry and try to evict them.',
+  type: FIELD_TYPES.RADIO_BTN,
+  options: [{ label: 'Yes', value: 'yes' }, { label: 'No', value: 'no' }],
+}
+
+export const VCAT_AVOID_REASON: Field = {
+  name: 'VCAT_AVOID_REASON',
+  rules: [rules.isTruthy],
+  when: Conditions.VCAT_NOT_OK,
+  prompt:
+    'Can you please explain why you wouldn’t be comfortable bringing a case against your landlord at VCAT?',
+  type: FIELD_TYPES.TEXTAREA,
 }
