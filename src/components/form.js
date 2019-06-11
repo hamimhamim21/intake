@@ -107,7 +107,7 @@ export const Form = ({
         </NamedLink>
       )}
       {isFinalForm && (
-        <NamedLink to={VIEWS.ReviewView} disabled={!validation.valid}>
+        <NamedLink to={VIEWS.ReviewView} onClick={onNext}>
           <Button type={validation.valid ? 'primary' : 'secondary'}>
             Review
           </Button>
