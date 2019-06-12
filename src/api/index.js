@@ -7,9 +7,25 @@ const cookies = new Cookies()
 
 const questions = {
   submission: {
-    create: (data: Data): Promise<Submission> => {
+    // Create a new submission.
+    create: (): Promise<Submission> => {
       const url = '/api/submission/'
-      return http.post(url, { data }).then(r => r.json())
+      return http.post(url, { data: {} }).then(r => r.json())
+    },
+    // Retrieve an existing submission.
+    get: (id: string): Promise<Submission> => {
+      const url = `/api/submission/${id}/`
+      return http.get(url).then(r => r.json())
+    },
+    // Update an existing submission's data.
+    update: (id: string, data: Data): Promise<Submission> => {
+      const url = `/api/submission/${id}/`
+      return http.patch(url, { data }).then(r => r.json())
+    },
+    // Submit a submission.
+    submit: (id: string): Promise<Submission> => {
+      const url = `/api/submission/${id}/`
+      return http.patch(url, { complete: true }).then(r => r.json())
     },
   },
   upload: (image: File): Promise<ImageUpload> => {

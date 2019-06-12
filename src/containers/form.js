@@ -7,6 +7,7 @@ import { FIELD_TYPES } from 'consts'
 import { Form } from 'components'
 import { validate, flattenArray } from 'utils'
 import { NamedRedirect, VIEWS } from 'routes'
+
 import type {
   View,
   Section,

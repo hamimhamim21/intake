@@ -102,14 +102,14 @@ export const Form = ({
           onClick={onNext}
         >
           <Button type={validation.valid ? 'primary' : 'secondary'}>
-            Next
+            Save & Next
           </Button>
         </NamedLink>
       )}
       {isFinalForm && (
         <NamedLink to={VIEWS.ReviewView} onClick={onNext}>
           <Button type={validation.valid ? 'primary' : 'secondary'}>
-            Review
+            Save & Review
           </Button>
         </NamedLink>
       )}
