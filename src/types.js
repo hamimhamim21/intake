@@ -35,13 +35,18 @@ export type Data = { [string]: any }
 
 export type FormState = {
   +answers: Data,
+  +loading: boolean,
+  +complete: boolean,
 }
 
 export type Redux = {
   +form: FormState,
 }
 
-export type Action = { +type: 'ANSWER_FORM', +name: string, +answer: any }
+export type Action =
+  | { +type: 'ANSWER_FORM', +name: string, +answer: any }
+  | { +type: 'FORM_LOADING' }
+  | { +type: 'FORM_LOADED', +answers: Data, +complete: boolean }
 
 export type PromiseAction = Promise<Action>
 

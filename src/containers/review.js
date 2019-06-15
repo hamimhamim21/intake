@@ -88,16 +88,3 @@ export const ReviewContainer = connect(
   mapState,
   mapActions
 )(_ReviewContainer)
-
-// This is a bit messy because we have fields with fields inside
-// ... maybe that was a stupid choice.
-const getQuestions = (sections: Array<Section>): Data =>
-  sections
-    // Get all the fields out of the section forms
-    .map(s => s.forms.map(form => form.fields).reduce(flattenArray, []))
-    .reduce(flattenArray, [])
-    // Get all the fields out of the nested fields
-    .map(field => (field.fields ? field.fields : field))
-    .reduce((arr, f) => (Array.isArray(f) ? [...arr, ...f] : [...arr, f]), [])
-    // Put everything in an object map
-    .reduce((obj, field) => ({ ...obj, [field.name]: field }), {})
