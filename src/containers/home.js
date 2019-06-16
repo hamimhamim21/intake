@@ -1,71 +1,65 @@
 // @flow
 import React, { useState } from 'react'
-import { connect } from 'react-redux'
+import { useDispatch } from 'react-redux'
+import { Button } from 'antd'
 
+import { Header, Page, Layout, Message } from 'components'
 import { actions } from 'state'
-import { FIELD_TYPES } from 'consts'
-import { Form } from 'components'
 import { validate, flattenArray } from 'utils'
 import { NamedRedirect, VIEWS } from 'routes'
+import { SECTIONS } from 'questions'
 
-type Props = {
-  onCreate: Function,
-}
-
-export const _HomeContainer = ({ onCreate }: Props) => {
-  const [redirect, setRedirect] = useState<string | null>(null)
+export const HomeContainer = () => {
+  const dispatch = useDispatch()
+  const [submissionId, setSubmissionId] = useState<string | null>(null)
   const [isLoading, setLoading] = useState(false)
-  if (redirect) {
-    return <NamedRedirect to={VIEWS[redirect]} />
+  // Create a new form submission.
+  const onCreate = () => {
+    setLoading(true)
+    dispatch(actions.form.create(SECTIONS)).then(sub => setSubmissionId(sub.id))
   }
-
-  const forms: Array<FormType> = sections.map(s => s.forms).reduce(flattenArray)
-  const form = forms[idx]
-
-  const validation = getValidation(form, answers)
-  const nextPage = getNextPage(idx, forms, answers)
-  const backPage = getBackPage(idx, forms, answers)
-  const isFinalForm = idx + 1 === forms.length
-
-  const onNext = (e: SyntheticEvent<any>) => {
-    const maybeRedirect = form.getRedirect ? form.getRedirect(answers) : null
-    if (maybeRedirect) {
-      setRedirect(maybeRedirect)
-      return
-    }
-    setSubmitted(true)
-    if (!validation.valid) {
-      e.preventDefault()
-      e.stopPropagation()
-    } else {
-      setSubmitted(false)
-      window.scrollTo(0, 0)
-    }
+  if (submissionId) {
+    return (
+      <NamedRedirect
+        to={VIEWS.FormView}
+        params={{
+          submissionId,
+          pageNumber: 0,
+        }}
+      />
+    )
   }
-
   return (
-    <Form
-      idx={idx}
-      form={form}
-      validation={validation}
-      data={answers}
-      nextPage={nextPage}
-      backPage={backPage}
-      onNext={onNext}
-      onChange={k => v => setAnswer(k, v)}
-      isFinalForm={isFinalForm}
-      isSubmitted={isSubmitted}
-    />
+    <Layout vertical>
+      <Header />
+      <Layout>
+        <Page>
+          <Message>
+            <h1>Welcome to Anika</h1>
+            <p>
+              Anika is a registered charity that provides legal advice to
+              members of the public. Our legal advice helpful for two key
+              reasons:
+            </p>
+            <ul>
+              <li>
+                It's all online, so you don’t need to leave the comfort of your
+                home.
+              </li>
+              <li>It's 100% free: you don’t need to pay us anything.</li>
+            </ul>
+            <h2>Here's how it works</h2>
+            <p>
+              So you need something in your rental property to be fixed? In
+              order for us to help you get it fixed, we need you to first
+              complete our questionnaire.
+            </p>
+            <Button disabled={isLoading} onClick={onCreate} type="primary">
+              Get started
+            </Button>
+          </Message>
+        </Page>
+      </Layout>
+    </Layout>
   )
 }
-
-const mapState = (state: Redux) => ({
-  answers: state.form.answers,
-})
-const mapActions = dispatch => ({
-  setAnswer: (...args) => dispatch(actions.form.answer(...args)),
-})
-export const HomeContainer = connect(
-  mapState,
-  mapActions
-)(_HomeContainer)

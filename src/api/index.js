@@ -1,6 +1,6 @@
 // @flow
 import { http } from './http'
-import type { Data, Field, ImageUpload, Submission } from 'types'
+import type { Data, ImageUpload, Submission, Section } from 'types'
 import Cookies from 'universal-cookie'
 
 const cookies = new Cookies()
@@ -8,7 +8,7 @@ const cookies = new Cookies()
 const questions = {
   submission: {
     // Create a new submission.
-    create: (questions: { [string]: Field }): Promise<Submission> => {
+    create: (questions: Array<Section>): Promise<Submission> => {
       const url = '/api/submission/'
       const data = {
         answers: [],

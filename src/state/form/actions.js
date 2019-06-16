@@ -1,7 +1,8 @@
 // @flow
 import { api } from 'api'
-import { flattenArray, entries } from 'utils'
-import type { Action, Dispatch, Section, Submission, Field, Data } from 'types'
+import type { Action, Dispatch, GetState, Section, Submission } from 'types'
+
+import { getBackendAnswers } from './utils'
 
 export default {
   answer: (name: string, answer: any): Action => ({
@@ -13,81 +14,49 @@ export default {
     dispatch: Dispatch
   ): Promise<Submission> => {
     dispatch({ type: 'FORM_LOADING' })
-    const questions = getQuestions(sections)
-    return api.questions.submission.create(questions).then(submission => {
-      const answers = getFrontendAnswers(submission)
+    return api.questions.submission.create(sections).then(submission => {
       dispatch({
         type: 'FORM_LOADED',
-        answers,
-        complete: submission.complete,
+        submission,
       })
       return submission
     })
   },
-  get: (id: string) => (dispatch: Dispatch): Promise<Submission> => {
+  load: (id: string) => (dispatch: Dispatch): Promise<Submission> => {
     dispatch({ type: 'FORM_LOADING' })
     return api.questions.submission.get(id).then(submission => {
-      const answers = getFrontendAnswers(submission)
       dispatch({
         type: 'FORM_LOADED',
-        answers,
-        complete: submission.complete,
+        submission,
       })
       return submission
     })
   },
-  update: (id: string, answerData: Data) => (
-    dispatch: Dispatch
-  ): Promise<Submission> => {
+  next: () => (dispatch: Dispatch, getState: GetState): Promise<Submission> => {
+    const {
+      form: { id, answers },
+    } = getState()
     dispatch({ type: 'FORM_LOADING' })
-    const answers = getBackendAnswers(answerData)
-    return api.questions.submission.update(id, answers).then(submission => {
-      const frontendAnswers = getFrontendAnswers(submission)
-      dispatch({
-        type: 'FORM_LOADED',
-        answers: frontendAnswers,
-        complete: submission.complete,
+    const backendAnswers = getBackendAnswers(answers)
+    return api.questions.submission
+      .update(id, backendAnswers)
+      .then(submission => {
+        dispatch({
+          type: 'FORM_NEXT',
+          submission,
+        })
+        return submission
       })
-      return submission
-    })
   },
+  prev: () => ({ type: 'FORM_PREV' }),
   submit: (id: string) => (dispatch: Dispatch): Promise<Submission> => {
     dispatch({ type: 'FORM_LOADING' })
     return api.questions.submission.submit(id).then(submission => {
-      const answers = getFrontendAnswers(submission)
       dispatch({
-        type: 'FORM_LOADED',
-        answers,
-        complete: submission.complete,
+        type: 'FORM_SUBMIT',
+        submission,
       })
       return submission
     })
   },
 }
-
-// A gross way to "ensure" ordering.
-const getBackendAnswers = (
-  answers: Data
-): Array<{
-  name: string,
-  answer: mixed,
-}> => entries(answers).map(([name, answer]) => ({ name, answer }))
-
-const getFrontendAnswers = (submission: Submission): Data =>
-  submission.answers.reduce((obj, { name, answer }) => ({
-    ...obj,
-    [name]: answer,
-  }))
-
-// This is a bit messy because we have fields with fields inside
-// ... maybe that was a stupid choice.
-const getQuestions = (sections: Array<Section>): { [string]: Field } =>
-  sections
-    // Get all the fields out of the section forms
-    .map(s => s.forms.map(form => form.fields).reduce(flattenArray, []))
-    .reduce(flattenArray, [])
-    // Get all the fields out of the nested fields
-    .map(field => (field.fields ? field.fields : field))
-    .reduce((arr, f) => (Array.isArray(f) ? [...arr, ...f] : [...arr, f]), [])
-    // Put everything in an object map
-    .reduce((obj, field) => ({ ...obj, [field.name]: field }), {})

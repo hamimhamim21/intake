@@ -11,26 +11,26 @@ import type { Form as FormType, View, Data, Validations } from 'types'
 
 type FormProps = {
   form: FormType,
-  isSubmitted: boolean,
   validation: Validations,
-  nextPage: number | null,
-  backPage: number | null,
-  isFinalForm: boolean,
+  hasNext: boolean,
+  hasPrev: boolean,
+  isSubmitted: boolean,
   onNext: Function,
+  onPrev: Function,
   onChange: Function,
   data: Data,
 }
 
 export const Form = ({
   form,
-  data,
   validation,
-  nextPage,
-  backPage,
+  hasNext,
+  hasPrev,
   isSubmitted,
-  isFinalForm,
-  onChange,
   onNext,
+  onPrev,
+  onChange,
+  data,
 }: FormProps) => {
   return (
     <React.Fragment>
@@ -90,25 +90,22 @@ export const Form = ({
 
       <Divider />
 
-      {backPage !== null && (
-        <NamedLink to={VIEWS.FormView} params={{ formId: backPage }}>
-          <Button style={{ marginRight: '0.5rem' }}>Back</Button>
-        </NamedLink>
+      {hasPrev && (
+        <Button onClick={onPrev} style={{ marginRight: '0.5rem' }}>
+          Back
+        </Button>
       )}
-      {nextPage !== null && (
-        <NamedLink
-          to={VIEWS.FormView}
-          params={{ formId: nextPage }}
+      {hasNext && (
+        <Button
           onClick={onNext}
+          type={validation.valid ? 'primary' : 'default'}
         >
-          <Button type={validation.valid ? 'primary' : 'secondary'}>
-            Save & Next
-          </Button>
-        </NamedLink>
+          Save & Next
+        </Button>
       )}
-      {isFinalForm && (
+      {!hasNext && (
         <NamedLink to={VIEWS.ReviewView} onClick={onNext}>
-          <Button type={validation.valid ? 'primary' : 'secondary'}>
+          <Button type={validation.valid ? 'primary' : 'default'}>
             Save & Review
           </Button>
         </NamedLink>
