@@ -1,25 +1,29 @@
 // @flow
 import type { Reducer, Action, Redux } from 'types'
 import { init } from 'state/init'
+import { SECTIONS } from 'questions'
 
 import * as utils from './utils'
 
-// Form operation
+// Form operations
+// This is a but of a clusterfuck right now, it could probably be simpler.
+// Also tests would be cool.
 export const reducer: Reducer = (state, action) => {
-  let page, answers, forms, form
+  let nextPage, answers, forms, nextForm, currentForm, validation
   if (!state) return init
   switch (action.type) {
     // User answers a question
     case 'ANSWER_FORM':
+      answers = {
+        ...state.form.answers,
+        [action.name]: action.answer,
+      }
+      forms = utils.getForms(SECTIONS)
+      currentForm = forms[state.form.page]
+      validation = utils.getValidation(currentForm, answers)
       return {
         ...state,
-        form: {
-          ...state.form,
-          answers: {
-            ...state.form.answers,
-            [action.name]: action.answer,
-          },
-        },
+        form: { ...state.form, answers, validation },
       }
     // Form starts loading from backend.
     case 'FORM_LOADING':
@@ -32,20 +36,20 @@ export const reducer: Reducer = (state, action) => {
       }
     // Form finished loading from backend.
     case 'FORM_LOADED':
-      page = 0
+      nextPage = 0
       answers = utils.getFrontendAnswers(action.submission)
-      forms = utils.getForms(action.submission)
-      form = utils.getForm(0, action.submission)
+      forms = utils.getForms(SECTIONS)
+      nextForm = forms[nextPage]
       return {
         ...state,
         form: {
           id: action.submission.id,
           answers,
-          questions: action.submission.questions,
-          page,
-          hasNext: utils.getHasNext(page, answers, forms),
-          hasPrev: utils.getHasPrev(page, answers, forms),
-          validation: utils.getValidation(form, answers),
+          questions: SECTIONS, // "Temporary" hack.
+          page: nextPage,
+          hasNext: utils.getHasNext(nextPage, answers, forms),
+          hasPrev: utils.getHasPrev(nextPage, answers, forms),
+          validation: utils.getValidation(nextForm, answers),
           isSubmitted: false,
           isLoading: false,
           isComplete: action.submission.complete,
@@ -53,31 +57,43 @@ export const reducer: Reducer = (state, action) => {
       }
     // User requests next page.
     case 'FORM_NEXT':
-      page = state.form.page + 1
-      answers = utils.getFrontendAnswers(action.submission)
-      forms = utils.getForms(action.submission)
-      form = utils.getForm(0, action.submission)
+      const { submission } = action
+      answers = utils.getFrontendAnswers(submission)
+      forms = utils.getForms(SECTIONS)
+      currentForm = forms[state.form.page]
+      validation = utils.getValidation(currentForm, answers)
+      nextPage = validation.valid ? state.form.page + 1 : state.form.page
+      nextForm = forms[nextPage]
       return {
         ...state,
         form: {
-          id: action.submission.id,
+          id: submission.id,
           answers,
-          questions: action.submission.questions,
-          page,
-          hasNext: utils.getHasNext(page, answers, forms),
-          hasPrev: utils.getHasPrev(page, answers, forms),
-          validation: utils.getValidation(form, answers),
-          isSubmitted: false,
+          questions: SECTIONS, // "Temporary" hack.
+          page: nextPage,
+          hasNext: utils.getHasNext(nextPage, answers, forms),
+          hasPrev: utils.getHasPrev(nextPage, answers, forms),
+          validation: utils.getValidation(nextForm, answers),
+          isSubmitted: !validation.valid,
           isLoading: false,
-          isComplete: action.submission.complete,
+          isComplete: submission.complete,
         },
       }
     // User requests previous page.
     case 'FORM_PREV':
-      page = state.form.page - 1
+      nextPage = state.form.page - 1
+      forms = utils.getForms(SECTIONS)
+      nextForm = forms[nextPage]
+      validation = utils.getValidation(nextForm, state.form.answers)
       return {
         ...state,
-        form: { ...state.form, page },
+        form: {
+          ...state.form,
+          page: nextPage,
+          hasNext: utils.getHasNext(nextPage, state.form.answers, forms),
+          hasPrev: utils.getHasPrev(nextPage, state.form.answers, forms),
+          validation,
+        },
       }
     // User submits the form.
     case 'FORM_SUBMIT':

@@ -42,7 +42,7 @@ export const LANDLORD_COMMS_DETAILS: Form = {
 }
 
 export const LANDLORD_CONTACT: Form = {
-  name: 'LANDLORD_COMMS_DETAILS',
+  name: 'LANDLORD_CONTACT',
   prompt: "Your landlord's contact details",
   fields: [
     Fields.LANDLORD_CONTACT_DETAILS,

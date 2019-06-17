@@ -10,6 +10,7 @@ import { NamedLink, VIEWS } from 'routes'
 import type { Form as FormType, View, Data, Validations } from 'types'
 
 type FormProps = {
+  submissionId: string,
   form: FormType,
   validation: Validations,
   hasNext: boolean,
@@ -22,6 +23,7 @@ type FormProps = {
 }
 
 export const Form = ({
+  submissionId,
   form,
   validation,
   hasNext,
@@ -104,7 +106,11 @@ export const Form = ({
         </Button>
       )}
       {!hasNext && (
-        <NamedLink to={VIEWS.ReviewView} onClick={onNext}>
+        <NamedLink
+          to={VIEWS.ReviewView}
+          params={{ submissionId }}
+          onClick={onNext}
+        >
           <Button type={validation.valid ? 'primary' : 'default'}>
             Save & Review
           </Button>

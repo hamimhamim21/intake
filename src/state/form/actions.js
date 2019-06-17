@@ -32,7 +32,10 @@ export default {
       return submission
     })
   },
-  next: () => (dispatch: Dispatch, getState: GetState): Promise<Submission> => {
+  next: () => (
+    dispatch: Dispatch,
+    getState: GetState
+  ): Promise<Submission | void> => {
     const {
       form: { id, answers },
     } = getState()

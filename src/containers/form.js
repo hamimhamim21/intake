@@ -1,11 +1,12 @@
 // @flow
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
+import { Spin } from 'antd'
 
 import { actions } from 'state'
 import { FIELD_TYPES } from 'consts'
 import { Form, Header, Page, Layout } from 'components'
-import { validate, flattenArray } from 'utils'
+import { logError, validate, flattenArray } from 'utils'
 import { NamedRedirect, VIEWS } from 'routes'
 import { Sidebar } from 'containers'
 import { SECTIONS } from 'questions'
@@ -29,18 +30,29 @@ export const FormContainer = ({ submissionId }: Props) => {
   )
   // Load submission if it is not already loaded.
   useEffect(() => {
-    if (!formState.id) loadSubmission()
+    if (!formState.id) loadSubmission().catch(logError)
   }, [])
   // Redirect users to out-of-form message pages.
+  if (formState.isComplete) {
+    return <NamedRedirect to={VIEWS.SubmittedView} />
+  }
   if (redirect) {
     return <NamedRedirect to={VIEWS[redirect]} />
   }
   if (formState.isLoading) {
-    return <div>Loading...</div>
+    return (
+      <Layout vertical>
+        <Page>
+          <Spin tip="Loading..." />
+        </Page>
+      </Layout>
+    )
   }
+
   const forms: Array<FormType> = SECTIONS.map(s => s.forms).reduce(flattenArray)
   const form = forms[formState.page]
   // Redirect if necessary, otherwise request next page.
+  // TODO - move this into some Redux middleware.
   const onNext = (e: SyntheticEvent<any>) => {
     const maybeRedirect = form.getRedirect
       ? form.getRedirect(formState.answers)
@@ -48,13 +60,7 @@ export const FormContainer = ({ submissionId }: Props) => {
     if (maybeRedirect) {
       setRedirect(maybeRedirect)
     } else {
-      if (!formState.validation.valid) {
-        e.preventDefault()
-        e.stopPropagation()
-      } else {
-        dispatch(actions.form.next())
-        window.scrollTo(0, 0)
-      }
+      dispatch(actions.form.next()).catch(logError)
     }
   }
   return (
@@ -64,6 +70,7 @@ export const FormContainer = ({ submissionId }: Props) => {
         <Sidebar current={formState.page} sections={SECTIONS} />
         <Page>
           <Form
+            submissionId={submissionId}
             form={form}
             validation={formState.validation}
             hasNext={formState.hasNext}

@@ -40,12 +40,8 @@ export const getQuestions = (sections: Array<Section>): { [string]: Field } =>
     // Put everything in an object map
     .reduce((obj, field) => ({ ...obj, [field.name]: field }), {})
 
-export const getForms = ({ questions }: Submission): Array<Form> => {
+export const getForms = (questions: Array<Section>): Array<Form> => {
   return questions.map(q => q.forms).reduce((arr, f) => [...arr, ...f], [])
-}
-
-export const getForm = (page: number, sub: Submission): Form => {
-  return getForms(sub)[page]
 }
 
 export const getValidation = (form: Form, answers: Data): Validations => {
