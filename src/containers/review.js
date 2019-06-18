@@ -24,7 +24,6 @@ export const ReviewContainer = ({ submissionId }: Props) => {
   const loadSubmission = () =>
     dispatch(actions.form.load(submissionId)).catch(logError)
 
-  const isLoading: boolean = useSelector(({ form }: Redux) => form.isLoading)
   const formState: FormState = useSelector(
     ({ form }: Redux) => form,
     shallowEqual
@@ -33,7 +32,7 @@ export const ReviewContainer = ({ submissionId }: Props) => {
   useEffect(() => {
     if (!formState.id) loadSubmission()
   }, [])
-  if (isLoading) {
+  if (formState.isLoading) {
     return (
       <Layout vertical>
         <Header />

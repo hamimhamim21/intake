@@ -31,7 +31,7 @@ export const reducer: Reducer = (state, action) => {
         ...state,
         form: {
           ...state.form,
-          iaLoading: true,
+          isLoading: true,
         },
       }
     // Form finished loading from backend.
@@ -62,7 +62,9 @@ export const reducer: Reducer = (state, action) => {
       forms = utils.getForms(SECTIONS)
       currentForm = forms[state.form.page]
       validation = utils.getValidation(currentForm, answers)
-      nextPage = validation.valid ? state.form.page + 1 : state.form.page
+      const { hasNext } = state.form
+      nextPage =
+        validation.valid && hasNext ? state.form.page + 1 : state.form.page
       nextForm = forms[nextPage]
       return {
         ...state,
@@ -101,7 +103,7 @@ export const reducer: Reducer = (state, action) => {
         ...state,
         form: {
           ...state.form,
-          iaLoading: false,
+          isLoading: false,
           isComplete: action.submission.complete,
         },
       }
